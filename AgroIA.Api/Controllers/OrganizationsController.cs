@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-
-
 using AgroIA.Api.Services;
-using Microsoft.AspNetCore.Mvc;
+
 
 namespace AgroIA.Api.Controllers;
 
