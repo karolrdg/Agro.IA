@@ -15,7 +15,7 @@ public class OrganizationsController : ControllerBase
             new
             {
                 id = 1,
-                name = "SLC Agrícola",
+                name = "Sede Agrícola",
                 type = "Agricultural Company"
             },
             new
