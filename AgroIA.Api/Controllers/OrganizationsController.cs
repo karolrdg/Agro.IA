@@ -1,30 +1,27 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
 
+using AgroIA.Api.Services;
+using Microsoft.AspNetCore.Mvc;
+
 namespace AgroIA.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
 public class OrganizationsController : ControllerBase
 {
+    private readonly OrganizationService _organizationService;
+
+    public OrganizationsController(
+        OrganizationService organizationService)
+    {
+        _organizationService = organizationService;
+    }
+
     [HttpGet]
     public IActionResult GetOrganizations()
     {
-        var organizations = new[]
-        {
-            new
-            {
-                id = 1,
-                name = "Sede Agrícola",
-                type = "Agricultural Company"
-            },
-            new
-            {
-                id = 2,
-                name = "AgroTech Demo",
-                type = "AgTech"
-            }
-        };
+        var organizations = _organizationService.GetOrganizations();
 
         return Ok(organizations);
     }
