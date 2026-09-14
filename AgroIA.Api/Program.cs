@@ -20,4 +20,13 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+app.MapGet("/api/health", () =>
+{
+    return Results.Ok(new
+    {
+        status = "healthy",
+        service = "AgroIA.Api"
+    });
+});
+
 app.Run();
