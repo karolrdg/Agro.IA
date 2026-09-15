@@ -18,5 +18,15 @@ public class OrganizationRepository
             .AsNoTracking()
             .ToListAsync();
     }
+
+    public async Task<Organization> CreateOrganizationAsync(
+    Organization organization)
+    {
+        _context.Organizations.Add(organization);
+
+        await _context.SaveChangesAsync();
+
+        return organization;
+    }
 }
 

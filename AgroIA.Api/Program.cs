@@ -1,6 +1,8 @@
 using AgroIA.Api.Data;
 using AgroIA.Api.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,16 +12,29 @@ builder.Services.AddDbContext<AgroIADbContext>(options =>
 
 builder.Services.AddScoped<OrganizationService>();
 builder.Services.AddScoped<OrganizationRepository>();
+
 builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+
+builder.Services.AddEndpointsApiExplorer();
+
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc(
+        "v1",
+        new OpenApiInfo
+        {
+            Title = "AgroIA API",
+            Version = "v1"
+        });
+});
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    app.UseSwagger();
+
+    app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();
