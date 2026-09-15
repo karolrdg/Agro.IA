@@ -9,6 +9,7 @@ builder.Services.AddDbContext<AgroIADbContext>(options =>
         builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddScoped<OrganizationService>();
+builder.Services.AddScoped<OrganizationRepository>();
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
