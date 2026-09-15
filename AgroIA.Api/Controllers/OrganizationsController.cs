@@ -17,9 +17,10 @@ public class OrganizationsController : ControllerBase
     }
 
     [HttpGet]
-    public IActionResult GetOrganizations()
+    public async Task<IActionResult> GetOrganizations()
     {
-        var organizations = _organizationService.GetOrganizations();
+        var organizations =
+            await _organizationService.GetOrganizationsAsync();
 
         return Ok(organizations);
     }

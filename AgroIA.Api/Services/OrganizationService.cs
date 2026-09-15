@@ -1,25 +1,21 @@
-﻿using AgroIA.Api.Models;
+﻿using AgroIA.Api.Data;
+using AgroIA.Api.Models;
 
 namespace AgroIA.Api.Services;
 
 public class OrganizationService
 {
-    public List<Organization> GetOrganizations()
+    private readonly OrganizationRepository _organizationRepository;
+
+    public OrganizationService(
+        OrganizationRepository organizationRepository)
     {
-        return new List<Organization>
-        {
-            new Organization
-            {
-                Id = 1,
-                Name = "Empresa Rural Demo",
-                Type = "Agricultural Company"
-            },
-            new Organization
-            {
-                Id = 2,
-                Name = "AgroTech Demo",
-                Type = "AgTech"
-            }
-        };
+        _organizationRepository = organizationRepository;
+    }
+
+    public async Task<List<Organization>> GetOrganizationsAsync()
+    {
+        return await _organizationRepository
+            .GetOrganizationsAsync();
     }
 }
