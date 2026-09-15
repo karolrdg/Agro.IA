@@ -28,15 +28,25 @@ public class OrganizationsController : ControllerBase
 
     [HttpPost]
     public async Task<IActionResult> CreateOrganization(
-        [FromBody] CreateOrganizationRequest request)
+      [FromBody] CreateOrganizationRequest request)
     {
-        var organization =
-            await _organizationService
-                .CreateOrganizationAsync(request);
+        try
+        {
+            var organization =
+                await _organizationService
+                    .CreateOrganizationAsync(request);
 
-        return CreatedAtAction(
-            nameof(GetOrganizations),
-            new { id = organization.Id },
-            organization);
+            return CreatedAtAction(
+                nameof(GetOrganizations),
+                new { id = organization.Id },
+                organization);
+        }
+        catch (InvalidOperationException exception)
+        {
+            return Conflict(new
+            {
+                message = exception.Message
+            });
+        }
     }
 }

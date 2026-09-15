@@ -21,8 +21,18 @@ public class OrganizationService
     }
 
     public async Task<Organization> CreateOrganizationAsync(
-    CreateOrganizationRequest request)
+      CreateOrganizationRequest request)
     {
+        var organizationNameExists =
+            await _organizationRepository
+                .ExistsByNameAsync(request.Name);
+
+        if (organizationNameExists)
+        {
+            throw new InvalidOperationException(
+                "Já existe uma organização com esse nome.");
+        }
+
         var organization = new Organization
         {
             Name = request.Name,
@@ -31,5 +41,11 @@ public class OrganizationService
 
         return await _organizationRepository
             .CreateOrganizationAsync(organization);
+    }
+
+    public async Task<bool> OrganizationNameExistsAsync(string name)
+    {
+        return await _organizationRepository
+            .ExistsByNameAsync(name);
     }
 }

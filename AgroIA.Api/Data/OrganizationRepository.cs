@@ -28,5 +28,11 @@ public class OrganizationRepository
 
         return organization;
     }
+
+    public async Task<bool> ExistsByNameAsync(string name)
+    {
+        return await _context.Organizations
+            .AnyAsync(organization => organization.Name == name);
+    }
 }
 
