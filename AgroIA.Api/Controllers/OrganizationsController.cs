@@ -28,7 +28,7 @@ public class OrganizationsController : ControllerBase
 
     [HttpPost]
     public async Task<IActionResult> CreateOrganization(
-    CreateOrganizationRequest request)
+        [FromBody] CreateOrganizationRequest request)
     {
         var organization =
             await _organizationService
