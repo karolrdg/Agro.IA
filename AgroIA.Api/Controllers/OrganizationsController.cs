@@ -88,5 +88,21 @@ public class OrganizationsController : ControllerBase
         return NoContent();
     }
 
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetOrganizationById(int id)
+    {
+        var organization =
+            await _organizationService
+                .GetOrganizationByIdAsync(id);
 
+        if (organization is null)
+        {
+            return NotFound(new
+            {
+                message = "Organização não encontrada."
+            });
+        }
+
+        return Ok(organization);
+    }
 }

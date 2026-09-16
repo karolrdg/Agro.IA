@@ -84,4 +84,10 @@ public class OrganizationService
         return true;
     }
 
+    public async Task<Organization?> GetOrganizationByIdAsync(int id)
+    {
+        return await _organizationRepository
+            .GetByIdAsync(id);
+    }
+
 }
