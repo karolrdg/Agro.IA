@@ -90,4 +90,11 @@ public class OrganizationService
             .GetByIdAsync(id);
     }
 
+    public async Task<List<Organization>> SearchOrganizationsAsync(
+        string? name,
+        string? type)
+    {
+        return await _organizationRepository
+            .SearchOrganizationsAsync(name, type);
+    }
 }
