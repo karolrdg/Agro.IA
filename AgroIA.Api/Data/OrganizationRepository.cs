@@ -34,5 +34,21 @@ public class OrganizationRepository
         return await _context.Organizations
             .AnyAsync(organization => organization.Name == name);
     }
+
+    public async Task<Organization?> GetByIdAsync(int id)
+    {
+        return await _context.Organizations
+            .FirstOrDefaultAsync(organization => organization.Id == id);
+    }
+
+    public async Task<Organization?> UpdateOrganizationAsync(
+    Organization organization)
+    {
+        _context.Organizations.Update(organization);
+
+        await _context.SaveChangesAsync();
+
+        return organization;
+    }
 }
 
