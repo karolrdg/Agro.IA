@@ -50,5 +50,13 @@ public class OrganizationRepository
 
         return organization;
     }
+
+    public async Task DeleteOrganizationAsync(
+    Organization organization)
+    {
+        _context.Organizations.Remove(organization);
+
+        await _context.SaveChangesAsync();
+    }
 }
 

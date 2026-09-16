@@ -67,4 +67,20 @@ public class OrganizationService
         return await _organizationRepository
             .UpdateOrganizationAsync(organization);
     }
+
+    public async Task<bool> DeleteOrganizationAsync(int id)
+    {
+        var organization =
+            await _organizationRepository.GetByIdAsync(id);
+
+        if (organization is null)
+        {
+            return false;
+        }
+
+        await _organizationRepository
+            .DeleteOrganizationAsync(organization);
+
+        return true;
+    }
 }
