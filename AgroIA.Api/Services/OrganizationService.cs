@@ -48,4 +48,23 @@ public class OrganizationService
         return await _organizationRepository
             .ExistsByNameAsync(name);
     }
+
+    public async Task<Organization?> UpdateOrganizationAsync(
+    int id,
+    UpdateOrganizationRequest request)
+    {
+        var organization =
+            await _organizationRepository.GetByIdAsync(id);
+
+        if (organization is null)
+        {
+            return null;
+        }
+
+        organization.Name = request.Name;
+        organization.Type = request.Type;
+
+        return await _organizationRepository
+            .UpdateOrganizationAsync(organization);
+    }
 }

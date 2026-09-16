@@ -49,4 +49,24 @@ public class OrganizationsController : ControllerBase
             });
         }
     }
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> UpdateOrganization(
+    int id,
+    [FromBody] UpdateOrganizationRequest request)
+    {
+        var organization =
+            await _organizationService
+                .UpdateOrganizationAsync(id, request);
+
+        if (organization is null)
+        {
+            return NotFound(new
+            {
+                message = "Organização não encontrada."
+            });
+        }
+
+        return Ok(organization);
+    }
 }
