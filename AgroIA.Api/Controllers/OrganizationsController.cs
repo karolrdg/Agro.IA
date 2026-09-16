@@ -104,5 +104,18 @@ public class OrganizationsController : ControllerBase
         }
 
         return Ok(organization);
+
+    }
+
+    [HttpGet("search")]
+    public async Task<IActionResult> SearchOrganizations(
+    [FromQuery] string? name,
+    [FromQuery] string? type)
+    {
+        var organizations =
+            await _organizationService
+                .SearchOrganizationsAsync(name, type);
+
+        return Ok(organizations);
     }
 }

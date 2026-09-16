@@ -58,5 +58,28 @@ public class OrganizationRepository
 
         await _context.SaveChangesAsync();
     }
+
+    public async Task<List<Organization>> SearchOrganizationsAsync(
+    string? name,
+    string? type)
+    {
+        var query = _context.Organizations
+            .AsNoTracking()
+            .AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(name))
+        {
+            query = query.Where(organization =>
+                organization.Name.Contains(name));
+        }
+
+        if (!string.IsNullOrWhiteSpace(type))
+        {
+            query = query.Where(organization =>
+                organization.Type.Contains(type));
+        }
+
+        return await query.ToListAsync();
+    }
 }
 
