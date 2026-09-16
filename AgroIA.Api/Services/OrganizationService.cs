@@ -92,9 +92,15 @@ public class OrganizationService
 
     public async Task<List<Organization>> SearchOrganizationsAsync(
         string? name,
-        string? type)
+        string? type,
+        int page,
+        int pageSize)
     {
         return await _organizationRepository
-            .SearchOrganizationsAsync(name, type);
+            .SearchOrganizationsAsync(
+                name,
+                type,
+                page,
+                pageSize);
     }
 }
