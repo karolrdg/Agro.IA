@@ -69,4 +69,24 @@ public class OrganizationsController : ControllerBase
 
         return Ok(organization);
     }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteOrganization(int id)
+    {
+        var deleted =
+            await _organizationService
+                .DeleteOrganizationAsync(id);
+
+        if (!deleted)
+        {
+            return NotFound(new
+            {
+                message = "A organização não foi excluída porque não foi encontrada."
+            });
+        }
+
+        return NoContent();
+    }
+
+
 }
