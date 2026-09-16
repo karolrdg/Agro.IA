@@ -60,8 +60,10 @@ public class OrganizationRepository
     }
 
     public async Task<List<Organization>> SearchOrganizationsAsync(
-    string? name,
-    string? type)
+        string? name,
+        string? type,
+        int page,
+        int pageSize)
     {
         var query = _context.Organizations
             .AsNoTracking()
@@ -79,7 +81,11 @@ public class OrganizationRepository
                 organization.Type.Contains(type));
         }
 
-        return await query.ToListAsync();
+        return await query
+            .OrderBy(organization => organization.Id)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
     }
 }
 
