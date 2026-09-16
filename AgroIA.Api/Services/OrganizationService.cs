@@ -90,12 +90,28 @@ public class OrganizationService
             .GetByIdAsync(id);
     }
 
-    public async Task<List<Organization>> SearchOrganizationsAsync(
-        string? name,
-        string? type,
-        int page,
-        int pageSize)
+    public async Task<PaginatedOrganizationsResponse>
+        SearchOrganizationsAsync(
+            string? name,
+            string? type,
+            int page,
+            int pageSize)
     {
+        // Verifica se o número da página é válido.
+        if (page < 1)
+        {
+            throw new ArgumentException(
+                "A página deve ser maior ou igual a 1.");
+        }
+
+        // Verifica se o tamanho da página é válido.
+        if (pageSize < 1)
+        {
+            throw new ArgumentException(
+                "O tamanho da página deve ser maior ou igual a 1.");
+        }
+
+        // Busca as organizações no repositório.
         return await _organizationRepository
             .SearchOrganizationsAsync(
                 name,
