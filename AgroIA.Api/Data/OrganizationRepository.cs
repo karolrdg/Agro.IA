@@ -1,5 +1,6 @@
 ﻿using AgroIA.Api.Models;
 using Microsoft.EntityFrameworkCore;
+using AgroIA.Api.DTOs;
 
 namespace AgroIA.Api.Data;
 
@@ -59,11 +60,12 @@ public class OrganizationRepository
         await _context.SaveChangesAsync();
     }
 
-    public async Task<List<Organization>> SearchOrganizationsAsync(
-        string? name,
-        string? type,
-        int page,
-        int pageSize)
+    public async Task<PaginatedOrganizationsResponse>
+     SearchOrganizationsAsync(
+         string? name,
+         string? type,
+         int page,
+         int pageSize)
     {
         var query = _context.Organizations
             .AsNoTracking()
@@ -81,11 +83,25 @@ public class OrganizationRepository
                 organization.Type.Contains(type));
         }
 
-        return await query
+        var totalItems = await query.CountAsync();
+
+        var organizations = await query
             .OrderBy(organization => organization.Id)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync();
+
+        var totalPages = (int)Math.Ceiling(
+            totalItems / (double)pageSize);
+
+        return new PaginatedOrganizationsResponse
+        {
+            Items = organizations,
+            Page = page,
+            PageSize = pageSize,
+            TotalItems = totalItems,
+            TotalPages = totalPages
+        };
     }
 }
 

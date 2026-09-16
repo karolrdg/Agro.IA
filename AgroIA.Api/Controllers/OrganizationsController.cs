@@ -109,19 +109,29 @@ public class OrganizationsController : ControllerBase
 
     [HttpGet("search")]
     public async Task<IActionResult> SearchOrganizations(
-       [FromQuery] string? name,
-       [FromQuery] string? type,
-       [FromQuery] int page = 1,
-       [FromQuery] int pageSize = 10)
+     [FromQuery] string? name,
+     [FromQuery] string? type,
+     [FromQuery] int page = 1,
+     [FromQuery] int pageSize = 10)
     {
-        var organizations =
-            await _organizationService
-                .SearchOrganizationsAsync(
-                    name,
-                    type,
-                    page,
-                    pageSize);
+        try
+        {
+            var organizations =
+                await _organizationService
+                    .SearchOrganizationsAsync(
+                        name,
+                        type,
+                        page,
+                        pageSize);
 
-        return Ok(organizations);
+            return Ok(organizations);
+        }
+        catch (ArgumentException exception)
+        {
+            return BadRequest(new
+            {
+                message = exception.Message
+            });
+        }
     }
 }
