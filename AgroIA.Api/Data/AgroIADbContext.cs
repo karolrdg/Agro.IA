@@ -12,4 +12,6 @@ public class AgroIADbContext : DbContext
     }
 
     public DbSet<Organization> Organizations { get; set; }
+
+    public DbSet<User> Users { get; set; }
 }

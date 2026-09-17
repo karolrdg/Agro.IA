@@ -2,7 +2,7 @@ using AgroIA.Api.Data;
 using AgroIA.Api.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
-
+using AgroIA.Api.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +12,8 @@ builder.Services.AddDbContext<AgroIADbContext>(options =>
 
 builder.Services.AddScoped<OrganizationService>();
 builder.Services.AddScoped<OrganizationRepository>();
+builder.Services.AddScoped<UserRepository>();
+builder.Services.AddScoped<UserService>();
 
 builder.Services.AddControllers();
 
