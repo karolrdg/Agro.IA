@@ -1,6 +1,7 @@
 ﻿using AgroIA.Api.DTOs;
 using AgroIA.Api.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace AgroIA.Api.Controllers;
 
@@ -36,5 +37,35 @@ public class UsersController : ControllerBase
                 message = exception.Message
             });
         }
+    }
+
+    [HttpPost("login")]
+    public async Task<IActionResult> Login(
+        LoginRequest request)
+    {
+        try
+        {
+            var response =
+                await _userService.LoginAsync(request);
+
+            return Ok(response);
+        }
+        catch (Exception exception)
+        {
+            return Unauthorized(new
+            {
+                message = exception.Message
+            });
+        }
+    }
+    [Authorize]
+    [HttpGet("protected")]
+    public IActionResult Protected()
+    {
+        return Ok(new
+        {
+            message = "Você está autenticada!",
+            user = User.Identity?.Name
+        });
     }
 }
