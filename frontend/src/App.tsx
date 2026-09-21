@@ -7,6 +7,7 @@ import {
 
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
+import Organizations from "./pages/Organizations";
 
 function ProtectedRoute({
     children,
@@ -41,6 +42,16 @@ function App() {
                     element={
                         <ProtectedRoute>
                             <Dashboard />
+                        </ProtectedRoute>
+                    }
+                />
+
+                {/* Organizações protegidas */}
+                <Route
+                    path="/organizations"
+                    element={
+                        <ProtectedRoute>
+                            <Organizations />
                         </ProtectedRoute>
                     }
                 />
