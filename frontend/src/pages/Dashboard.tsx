@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { LogOut, Sprout, User } from "lucide-react";
+import { getProtectedData } from "../services/userService";
 
 export default function Dashboard() {
     const [name, setName] = useState("");
@@ -9,51 +10,51 @@ export default function Dashboard() {
 
     useEffect(() => {
         async function loadProtectedData() {
-            // Recupera o token salvo durante o login.
-            const token = localStorage.getItem("token");
-
-            if (!token) {
-                setError("Token não encontrado.");
-                setLoading(false);
-                return;
-            }
-
             try {
-                // Faz uma requisição para o endpoint protegido.
-                const response = await fetch(
-                    "http://localhost:5194/api/Users/protected",
-                    {
-                        method: "GET",
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                        },
-                    }
-                );
+                // Solicita os dados ao serviço
+                const data = await getProtectedData();
 
-                if (!response.ok) {
-                    throw new Error("Não foi possível acessar a API.");
-                }
-
-                // Converte a resposta da API para objeto JavaScript.
-                const data = await response.json();
-
+                // Guarda a mensagem retornada pela API
                 setMessage(data.message);
 
-                // Recupera o nome salvo no navegador.
+                // Recupera o nome salvo no login
                 const savedName = localStorage.getItem("name");
 
                 if (savedName) {
                     setName(savedName);
                 }
-            } catch (error) {
-                console.error("Erro ao carregar o Dashboard:", error);
+            } catch (error: unknown) {
+                // Verifica se a sessão expirou ou se o token é inválido
+                if (
+                    error instanceof Error &&
+                    error.message === "SESSION_EXPIRED"
+                ) {
+                    // Remove os dados de autenticação
+                    localStorage.removeItem("token");
+                    localStorage.removeItem("userId");
+                    localStorage.removeItem("name");
+                    localStorage.removeItem("email");
+
+                    // Redireciona para a tela de login
+                    window.location.href = "/login";
+
+                    return;
+                }
+
+                // Trata outros erros
+                console.error(
+                    "Erro ao carregar o Dashboard:",
+                    error
+                );
 
                 setError("Não foi possível carregar os dados.");
             } finally {
+                // Finaliza o estado de carregamento
                 setLoading(false);
             }
         }
 
+        // Executa a função quando o Dashboard é carregado
         loadProtectedData();
     }, []);
 
