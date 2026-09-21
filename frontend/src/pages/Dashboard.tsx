@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { LogOut, Sprout, User } from "lucide-react";
 import { getProtectedData } from "../services/userService";
+import { clearSession } from "../services/authStorage";
 
 export default function Dashboard() {
     const [name, setName] = useState("");
@@ -30,10 +31,7 @@ export default function Dashboard() {
                     error.message === "SESSION_EXPIRED"
                 ) {
                     // Remove os dados de autenticação
-                    localStorage.removeItem("token");
-                    localStorage.removeItem("userId");
-                    localStorage.removeItem("name");
-                    localStorage.removeItem("email");
+                    clearSession();
 
                     // Redireciona para a tela de login
                     window.location.href = "/login";
@@ -58,14 +56,13 @@ export default function Dashboard() {
         loadProtectedData();
     }, []);
 
-    function handleLogout() {
-        localStorage.removeItem("token");
-        localStorage.removeItem("userId");
-        localStorage.removeItem("name");
-        localStorage.removeItem("email");
+    const handleLogout = () => {
+        // Limpa todos os dados da sessão
+        clearSession();
 
+        // Redireciona para o login
         window.location.href = "/login";
-    }
+    };
 
     return (
         <main className="min-h-screen bg-slate-100 text-slate-900">
