@@ -136,25 +136,13 @@ export default function Organizations() {
         >
             <section className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-10 lg:px-8">
                 <div className="mb-8 grid gap-5 lg:grid-cols-[1.4fr_1fr]">
-                    <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#0b5b3d] via-[#0b4933] to-[#073b2a] p-6 text-white shadow-xl sm:p-8">
-                        <div className="pointer-events-none absolute -right-16 -top-20 h-64 w-64 rounded-full bg-emerald-300/10" />
+                    <div
+                        className="relative overflow-hidden rounded-3xl bg-[#073b2a] bg-cover bg-center p-6 text-white shadow-xl sm:p-8"
+                        style={{
+                            backgroundImage: "url('/imagem-agro.organizacao.png')"
+                        }}
+                    >
 
-                        <div className="relative max-w-2xl">
-                            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-emerald-200/20 bg-white/10 px-3 py-1.5 text-xs font-medium text-emerald-100">
-                                <Building2 size={14} />
-
-                                Cadastro institucional
-                            </div>
-
-                            <h2 className="text-3xl font-bold leading-tight tracking-tight sm:text-4xl">
-                                Organize as entidades do AgroIA
-                            </h2>
-
-                            <p className="mt-4 max-w-xl text-sm leading-6 text-emerald-100 sm:text-base">
-                                Cadastre, pesquise e acompanhe organizações
-                                vinculadas à plataforma.
-                            </p>
-                        </div>
                     </div>
 
                     <div className="rounded-3xl border border-slate-200/80 bg-white p-6 shadow-sm">
