@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import {
     Activity,
@@ -6,52 +5,18 @@ import {
     BrainCircuit,
     Building2,
     Leaf,
-    LayoutDashboard,
-    LogOut,
-    Menu,
-    Settings,
     Sprout,
-    UserRound,
-    X,
 } from "lucide-react";
 
-import { getProtectedData } from "../services/userService";
+import AppLayout from "../components/AppLayout";
 import { clearSession } from "../services/authStorage";
-
-const navigationItems = [
-    {
-        label: "Dashboard",
-        icon: LayoutDashboard,
-        active: true,
-    },
-    {
-        label: "Organizações",
-        icon: Building2,
-        active: false,
-    },
-    {
-        label: "Propriedades rurais",
-        icon: Sprout,
-        active: false,
-    },
-    {
-        label: "Análises de IA",
-        icon: BrainCircuit,
-        active: false,
-    },
-    {
-        label: "Configurações",
-        icon: Settings,
-        active: false,
-    },
-];
+import { getProtectedData } from "../services/userService";
 
 export default function Dashboard() {
     const [name, setName] = useState("");
     const [message, setMessage] = useState("");
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
-    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
     useEffect(() => {
         async function loadProtectedData() {
@@ -100,168 +65,8 @@ export default function Dashboard() {
         loadProtectedData();
     }, []);
 
-    const handleLogout = () => {
-        // Limpa todos os dados da sessão
-        clearSession();
-
-        // Redireciona para o login
-        window.location.href = "/login";
-    };
-
     return (
-        <main className="min-h-screen bg-[#f4f7f4] text-slate-900 lg:flex">
-            {isSidebarOpen && (
-                <button
-                    type="button"
-                    aria-label="Fechar menu"
-                    className="fixed inset-0 z-30 bg-slate-950/50 lg:hidden"
-                    onClick={() => setIsSidebarOpen(false)}
-                />
-            )}
-
-            {/* Navegação lateral */}
-            <aside
-                className={`fixed inset-y-0 left-0 z-40 flex w-72 flex-col border-r border-emerald-900/20 bg-[#073b2a] text-white shadow-2xl transition-transform duration-300 lg:static lg:min-h-screen lg:translate-x-0 lg:shadow-none ${
-                    isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-                }`}
-            >
-                <div className="flex items-center justify-between border-b border-white/10 px-5 py-5">
-                    {/* Logo e nome da plataforma */}
-                    <div className="flex items-center gap-3">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-400/20">
-                            <Sprout
-                                size={23}
-                                className="text-emerald-300"
-                            />
-                        </div>
-
-                        <div>
-                            <h1 className="text-lg font-bold tracking-tight">
-                                AgroIA
-                            </h1>
-
-                            <p className="text-xs text-emerald-200">
-                                Inteligência para o campo
-                            </p>
-                        </div>
-                    </div>
-
-                    <button
-                        type="button"
-                        aria-label="Fechar menu"
-                        onClick={() => setIsSidebarOpen(false)}
-                        className="rounded-xl p-2 text-emerald-100 transition hover:bg-white/10 lg:hidden"
-                    >
-                        <X size={20} />
-                    </button>
-                </div>
-
-                <nav className="flex-1 px-4 py-5">
-                    <div className="space-y-1">
-                        {navigationItems.map((item) => {
-                            const Icon = item.icon;
-
-                            return (
-                                <button
-                                    key={item.label}
-                                    type="button"
-                                    aria-current={item.active ? "page" : undefined}
-                                    onClick={() => setIsSidebarOpen(false)}
-                                    className={`flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-left text-sm font-medium transition ${
-                                        item.active
-                                            ? "bg-emerald-400/20 text-white shadow-sm"
-                                            : "text-emerald-100 hover:bg-white/10 hover:text-white"
-                                    }`}
-                                >
-                                    <Icon size={19} />
-
-                                    <span>{item.label}</span>
-                                </button>
-                            );
-                        })}
-                    </div>
-                </nav>
-
-                <div className="border-t border-white/10 p-4">
-                    <div className="flex items-center gap-3 rounded-2xl bg-white/10 px-4 py-3">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-400/20">
-                            <UserRound size={18} />
-                        </div>
-
-                        <div className="min-w-0">
-                            <p className="truncate text-sm font-semibold">
-                                {name || "Usuária"}
-                            </p>
-
-                            <p className="text-xs text-emerald-200">
-                                Conta autenticada
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </aside>
-
-            <div className="min-w-0 flex-1">
-                {/* Cabeçalho */}
-                <header className="border-b border-emerald-900/20 bg-[#073b2a] text-white lg:bg-white lg:text-slate-900">
-                    <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
-                        <div className="flex items-center gap-3">
-                            <button
-                                type="button"
-                                aria-label="Abrir menu"
-                                onClick={() => setIsSidebarOpen(true)}
-                                className="rounded-xl border border-white/20 p-2 transition hover:bg-white/10 lg:hidden"
-                            >
-                                <Menu size={20} />
-                            </button>
-
-                            <div className="lg:hidden">
-                                <h1 className="text-lg font-bold tracking-tight">
-                                    AgroIA
-                                </h1>
-
-                                <p className="text-xs text-emerald-200">
-                                    Inteligência para o campo
-                                </p>
-                            </div>
-
-                            <div className="hidden lg:block">
-                                <p className="text-xs font-semibold uppercase tracking-widest text-emerald-700">
-                                    Painel principal
-                                </p>
-
-                                <h1 className="mt-1 text-xl font-bold tracking-tight">
-                                    Dashboard
-                                </h1>
-                            </div>
-                        </div>
-
-                        {/* Perfil e logout */}
-                        <div className="flex items-center gap-3">
-                            <div className="hidden items-center gap-2 rounded-xl bg-white/10 px-3 py-2 sm:flex lg:bg-emerald-50 lg:text-emerald-900">
-                                <UserRound size={17} />
-
-                                <span className="max-w-32 truncate text-sm">
-                                    {name || "Usuária"}
-                                </span>
-                            </div>
-
-                            <button
-                                type="button"
-                                onClick={handleLogout}
-                                className="flex items-center gap-2 rounded-xl border border-white/20 px-3 py-2 text-sm transition hover:bg-white/10 lg:border-emerald-900/10 lg:text-emerald-900 lg:hover:bg-emerald-50"
-                            >
-                                <LogOut size={17} />
-
-                                <span className="hidden sm:inline">
-                                    Sair
-                                </span>
-                            </button>
-                        </div>
-                    </div>
-                </header>
-
-            {/* Conteúdo principal */}
+        <AppLayout title="Dashboard">
             <section className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-10 lg:px-8">
                 {/* Área de boas-vindas */}
                 <div className="relative mb-8 overflow-hidden rounded-3xl bg-gradient-to-br from-[#0b5b3d] via-[#0b4933] to-[#073b2a] p-6 text-white shadow-xl sm:p-10">
@@ -571,7 +376,6 @@ export default function Dashboard() {
                     </div>
                 </div>
             </section>
-            </div>
-        </main>
+        </AppLayout>
     );
 }
