@@ -69,7 +69,13 @@ export default function Dashboard() {
         <AppLayout title="Dashboard">
             <section className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-10 lg:px-8">
                 {/* Área de boas-vindas */}
-                <div className="relative mb-8 overflow-hidden rounded-3xl bg-gradient-to-br from-[#0b5b3d] via-[#0b4933] to-[#073b2a] p-6 text-white shadow-xl sm:p-10">
+                <div
+                    className="relative mb-8 overflow-hidden rounded-3xl bg-cover bg-center p-6 text-white shadow-xl sm:p-10"
+                    style={{
+                        backgroundImage:
+                            "linear-gradient(90deg, rgba(4, 67, 45, 0.92) 0%, rgba(4, 67, 45, 0.65) 50%, rgba(4, 67, 45, 0.25) 100%), url('/bg-dashboard.png')",
+                    }}
+                >
                     {/* Elementos decorativos */}
                     <div className="pointer-events-none absolute -right-16 -top-20 h-64 w-64 rounded-full bg-emerald-300/10" />
 
