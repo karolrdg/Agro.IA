@@ -20,9 +20,19 @@ public class RuralPropertiesController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(
-        CreateRuralPropertyRequest request)
+    public async Task<IActionResult> Create(CreateRuralPropertyRequest request)
     {
+        var organizationExists = await _context.Organizations
+            .AnyAsync(organization => organization.Id == request.OrganizationId);
+
+        if (!organizationExists)
+        {
+            return BadRequest(new
+            {
+                message = "A organização informada não existe."
+            });
+        }
+
         var ruralProperty = new RuralProperty(
             request.Name,
             request.Location,
@@ -30,10 +40,8 @@ public class RuralPropertiesController : ControllerBase
             request.OrganizationId);
 
         _context.RuralProperties.Add(ruralProperty);
-
         await _context.SaveChangesAsync();
 
-        //201 Created
         return CreatedAtAction(
             nameof(GetById),
             new { id = ruralProperty.Id },
@@ -57,4 +65,17 @@ public class RuralPropertiesController : ControllerBase
         }
         return Ok(ruralProperty);
     }
+
+    [HttpGet]
+    public async Task<IActionResult> GetAll()
+    {
+        var ruralProperties = await _context.RuralProperties
+            .AsNoTracking()
+            .ToListAsync();
+
+        // 200 OK
+        return Ok(ruralProperties);
+    }
+
+
 }
