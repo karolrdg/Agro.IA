@@ -12,6 +12,7 @@ import {
 import AppLayout from "../components/AppLayout";
 import {
     getRuralProperties,
+    createRuralProperty,
     type RuralProperty,
 } from "../services/ruralPropertyService";
 
@@ -24,6 +25,18 @@ export default function RuralProperties() {
 
     // Guarda mensagens de erro
     const [error, setError] = useState("");
+    // Estados do formulário de cadastro
+    const [name, setName] = useState("");
+    const [location, setLocation] = useState("");
+    const [areaInHectares, setAreaInHectares] = useState("");
+    const [organizationId, setOrganizationId] = useState("");
+
+    const [saving, setSaving] = useState(false);
+    const [formError, setFormError] = useState("");
+    const [success, setSuccess] = useState("");
+
+
+
 
     // Calcula a área total das propriedades
     const totalArea = useMemo(() => {
@@ -59,6 +72,73 @@ export default function RuralProperties() {
             setLoading(false);
         }
     }
+
+    // Cadastra uma nova propriedade rural
+    const handleCreate = async () => {
+        setFormError("");
+        setSuccess("");
+
+        // Verifica se todos os campos foram preenchidos
+        if (
+            !name.trim() ||
+            !location.trim() ||
+            !areaInHectares ||
+            !organizationId
+        ) {
+            setFormError("Preencha todos os campos do formulário.");
+            return;
+        }
+
+        const area = Number(areaInHectares);
+        const organization = Number(organizationId);
+
+        // Valida os valores numéricos
+        if (area <= 0 || organization <= 0) {
+            setFormError(
+                "A área e a organização devem possuir valores válidos."
+            );
+            return;
+        }
+
+        try {
+            setSaving(true);
+
+            await createRuralProperty({
+                name: name.trim(),
+                location: location.trim(),
+                areaInHectares: area,
+                organizationId: organization,
+            });
+
+            setSuccess("Propriedade cadastrada com sucesso!");
+
+            // Limpa os campos
+            setName("");
+            setLocation("");
+            setAreaInHectares("");
+            setOrganizationId("");
+
+            // Atualiza a lista
+            await loadProperties();
+        } catch (err) {
+            if (
+                err instanceof Error &&
+                err.message === "SESSION_EXPIRED"
+            ) {
+                localStorage.removeItem("token");
+                window.location.href = "/login";
+                return;
+            }
+
+            setFormError(
+                err instanceof Error
+                    ? err.message
+                    : "Não foi possível cadastrar a propriedade."
+            );
+        } finally {
+            setSaving(false);
+        }
+    };
 
     // Executa a busca ao abrir a página
     useEffect(() => {
@@ -179,6 +259,139 @@ export default function RuralProperties() {
                             Hectares registrados nas propriedades.
                         </p>
                     </div>
+                </section>
+
+                {/* Formulário de cadastro */}
+                <section className="rounded-3xl border border-slate-200/80 bg-white p-6 shadow-sm sm:p-8">
+                    <div className="mb-6">
+                        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-700">
+                            Novo cadastro
+                        </p>
+
+                        <h3 className="mt-2 text-2xl font-bold tracking-tight text-slate-900">
+                            Cadastrar propriedade rural
+                        </h3>
+
+                        <p className="mt-2 text-sm text-slate-500">
+                            Adicione uma propriedade e vincule-a a uma organização.
+                        </p>
+                    </div>
+
+                    <form
+                        onSubmit={(event) => {
+                            event.preventDefault();
+                            handleCreate();
+                        }}
+                        className="grid gap-5 md:grid-cols-2"
+                    >
+                        {/* Nome da propriedade */}
+                        <div>
+                            <label
+                                htmlFor="property-name"
+                                className="mb-2 block text-sm font-semibold text-slate-700"
+                            >
+                                Nome da propriedade
+                            </label>
+
+                            <input
+                                id="property-name"
+                                type="text"
+                                value={name}
+                                onChange={(event) => setName(event.target.value)}
+                                placeholder="Ex.: Fazenda Exemplo"
+                                className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+                            />
+                        </div>
+
+                        {/* Localização */}
+                        <div>
+                            <label
+                                htmlFor="property-location"
+                                className="mb-2 block text-sm font-semibold text-slate-700"
+                            >
+                                Localização
+                            </label>
+
+                            <input
+                                id="property-location"
+                                type="text"
+                                value={location}
+                                onChange={(event) => setLocation(event.target.value)}
+                                placeholder="Ex.: Rio Grande do Sul"
+                                className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+                            />
+                        </div>
+
+                        {/* Área */}
+                        <div>
+                            <label
+                                htmlFor="property-area"
+                                className="mb-2 block text-sm font-semibold text-slate-700"
+                            >
+                                Área em hectares
+                            </label>
+
+                            <input
+                                id="property-area"
+                                type="number"
+                                min="0.01"
+                                step="0.01"
+                                value={areaInHectares}
+                                onChange={(event) =>
+                                    setAreaInHectares(event.target.value)
+                                }
+                                placeholder="Ex.: 150"
+                                className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+                            />
+                        </div>
+
+                        {/* Organização */}
+                        <div>
+                            <label
+                                htmlFor="property-organization"
+                                className="mb-2 block text-sm font-semibold text-slate-700"
+                            >
+                                ID da organização
+                            </label>
+
+                            <input
+                                id="property-organization"
+                                type="number"
+                                min="1"
+                                value={organizationId}
+                                onChange={(event) =>
+                                    setOrganizationId(event.target.value)
+                                }
+                                placeholder="Ex.: 1"
+                                className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+                            />
+                        </div>
+
+                        {/* Mensagem de erro */}
+                        {formError && (
+                            <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700 md:col-span-2">
+                                {formError}
+                            </div>
+                        )}
+
+                        {/* Mensagem de sucesso */}
+                        {success && (
+                            <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-700 md:col-span-2">
+                                {success}
+                            </div>
+                        )}
+
+                        {/* Botão */}
+                        <div className="md:col-span-2">
+                            <button
+                                type="submit"
+                                disabled={saving}
+                                className="rounded-xl bg-emerald-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-60"
+                            >
+                                {saving ? "Cadastrando..." : "Cadastrar propriedade"}
+                            </button>
+                        </div>
+                    </form>
                 </section>
 
                 {/* Cabeçalho da lista */}
