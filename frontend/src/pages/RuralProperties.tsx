@@ -169,7 +169,7 @@ export default function RuralProperties() {
             setSaving(false);
         }
     };
-
+    //teste
     const loadOrganizations = async () => {
         try {
             setOrganizationsLoading(true);
