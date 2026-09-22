@@ -8,7 +8,7 @@ import {
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Organizations from "./pages/Organizations";
-
+import RuralProperties from "./pages/RuralProperties";
 function ProtectedRoute({
     children,
 }: {
@@ -38,10 +38,10 @@ function App() {
 
                 {/* Dashboard protegido */}
                 <Route
-                    path="/dashboard"
+                    path="/rural-properties"
                     element={
                         <ProtectedRoute>
-                            <Dashboard />
+                            <RuralProperties />
                         </ProtectedRoute>
                     }
                 />
@@ -56,6 +56,15 @@ function App() {
                     }
                 />
 
+                <Route
+                    path="/dashboard"
+                    element={
+                        <ProtectedRoute>
+                            <Dashboard />
+                        </ProtectedRoute>
+                    }
+                />
+
                 {/* Rota inicial */}
                 <Route
                     path="*"
@@ -66,6 +75,8 @@ function App() {
                         />
                     }
                 />
+
+
             </Routes>
         </BrowserRouter>
     );

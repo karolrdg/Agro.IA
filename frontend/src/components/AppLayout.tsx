@@ -28,6 +28,7 @@ const navigationItems = [
     {
         label: "Propriedades rurais",
         icon: Sprout,
+        path: "/rural-properties"
     },
     {
         label: "Análises de IA",
@@ -70,9 +71,8 @@ export default function AppLayout({
             )}
 
             <aside
-                className={`fixed inset-y-0 left-0 z-40 flex w-72 flex-col border-r border-emerald-900/20 bg-[#073b2a] text-white shadow-2xl transition-transform duration-300 lg:static lg:min-h-screen lg:translate-x-0 lg:shadow-none ${
-                    isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-                }`}
+                className={`fixed inset-y-0 left-0 z-40 flex w-72 flex-col border-r border-emerald-900/20 bg-[#073b2a] text-white shadow-2xl transition-transform duration-300 lg:static lg:min-h-screen lg:translate-x-0 lg:shadow-none ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+                    }`}
             >
                 <div className="flex items-center justify-between border-b border-white/10 px-5 py-5">
                     <div className="flex items-center gap-3">
@@ -129,10 +129,9 @@ export default function AppLayout({
                                     to={item.path}
                                     onClick={() => setIsSidebarOpen(false)}
                                     className={({ isActive }) =>
-                                        `flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-left text-sm font-medium transition ${
-                                            isActive
-                                                ? "bg-emerald-400/20 text-white shadow-sm"
-                                                : "text-emerald-100 hover:bg-white/10 hover:text-white"
+                                        `flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-left text-sm font-medium transition ${isActive
+                                            ? "bg-emerald-400/20 text-white shadow-sm"
+                                            : "text-emerald-100 hover:bg-white/10 hover:text-white"
                                         }`
                                     }
                                 >
