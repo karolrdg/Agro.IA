@@ -10,6 +10,13 @@ import {
 
 import type { CropSeason } from "../services/cropSeasonService";
 import { useNavigate } from "react-router-dom";
+import {
+    getRuralProperties,
+} from "../services/ruralPropertyService";
+
+import type {
+    RuralProperty,
+} from "../services/ruralPropertyService";
 
 export default function CropSeasons() {
     const [cropSeasons, setCropSeasons] = useState<CropSeason[]>([]);
@@ -29,7 +36,8 @@ export default function CropSeasons() {
     });
 
     const [isSaving, setIsSaving] = useState(false);
-
+    const [ruralProperties, setRuralProperties] = useState<RuralProperty[]>([]);
+    const [loadingProperties, setLoadingProperties] = useState(false);
     async function loadCropSeasons() {
         try {
             setLoading(true);
@@ -50,6 +58,32 @@ export default function CropSeasons() {
             setErrorMessage("Não foi possível carregar as safras.");
         } finally {
             setLoading(false);
+        }
+    }
+
+    async function loadRuralProperties() {
+        try {
+            setLoadingProperties(true);
+            setErrorMessage("");
+
+            const data = await getRuralProperties();
+
+            setRuralProperties(data);
+        } catch (error) {
+            if (
+                error instanceof Error &&
+                error.message === "SESSION_EXPIRED"
+            ) {
+                localStorage.removeItem("token");
+                window.location.href = "/login";
+                return;
+            }
+
+            setErrorMessage(
+                "Não foi possível carregar as propriedades rurais."
+            );
+        } finally {
+            setLoadingProperties(false);
         }
     }
 
@@ -82,12 +116,19 @@ export default function CropSeasons() {
 
     useEffect(() => {
         loadCropSeasons();
+        loadRuralProperties();
     }, []);
 
     async function handleCreateCropSeason(
         event: React.FormEvent<HTMLFormElement>
     ) {
         event.preventDefault();
+
+        // Verifica se uma propriedade rural foi selecionada
+        if (formData.ruralPropertyId === 0) {
+            setErrorMessage("Selecione uma propriedade rural.");
+            return;
+        }
 
         try {
             setIsSaving(true);
@@ -272,8 +313,11 @@ export default function CropSeasons() {
                                     <div className="flex items-center justify-between gap-3">
                                         <span>Propriedade</span>
 
-                                        <span className="font-medium text-slate-700">
-                                            #{cropSeason.ruralPropertyId}
+                                        <span className="font-medium text-right text-slate-700">
+                                            {ruralProperties.find(
+                                                (property) =>
+                                                    property.id === cropSeason.ruralPropertyId
+                                            )?.name || "Propriedade não encontrada"}
                                         </span>
                                     </div>
                                 </div>
@@ -347,20 +391,29 @@ export default function CropSeasons() {
                                     Ano
                                 </label>
 
-                                <input
-                                    type="number"
-                                    required
-                                    min="2000"
-                                    max="2100"
-                                    value={formData.year}
+                                <select
+                                    value={formData.ruralPropertyId}
                                     onChange={(event) =>
                                         setFormData({
                                             ...formData,
-                                            year: Number(event.target.value),
+                                            ruralPropertyId: Number(event.target.value),
                                         })
                                     }
-                                    className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
-                                />
+                                    disabled={loadingProperties}
+                                    className="w-full rounded-lg border border-gray-300 px-3 py-2"
+                                >
+                                    <option value={0}>
+                                        {loadingProperties
+                                            ? "Carregando propriedades..."
+                                            : "Selecione uma propriedade"}
+                                    </option>
+
+                                    {ruralProperties.map((property) => (
+                                        <option key={property.id} value={property.id}>
+                                            {property.name} - {property.location}
+                                        </option>
+                                    ))}
+                                </select>
                             </div>
 
                             <div>
@@ -399,12 +452,8 @@ export default function CropSeasons() {
                                     Cancelar
                                 </button>
 
-                                <button
-                                    type="submit"
-                                    disabled={isSaving}
-                                    className="cursor-pointer rounded-xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-50"
-                                >
-                                    {isSaving ? "Salvando..." : "Cadastrar"}
+                                <button type="submit" disabled={isSaving}>
+                                    {isSaving ? "Salvando..." : "Salvar safra"}
                                 </button>
                             </div>
                         </form>
