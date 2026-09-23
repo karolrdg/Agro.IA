@@ -110,5 +110,36 @@ public class RuralPropertiesController : ControllerBase
         return Ok(ruralProperties);
     }
 
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var property = await _context.RuralProperties
+            .FindAsync(id);
+
+        if (property is null)
+        {
+            return NotFound(new
+            {
+                message = "Propriedade rural não encontrada."
+            });
+        }
+
+        try
+        {
+            _context.RuralProperties.Remove(property);
+
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+        catch (DbUpdateException)
+        {
+            return BadRequest(new
+            {
+                message = "Não é possível excluir esta propriedade porque existem dados vinculados a ela, como safras."
+            });
+        }
+    }
+
 
 }

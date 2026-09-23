@@ -1,26 +1,18 @@
 import { useEffect, useMemo, useState } from "react";
 
 import {
-
     Activity,
-
     Building2,
-
     MapPin,
-
     RefreshCw,
-
     Ruler,
-
     Sprout,
-
 } from "lucide-react";
-
 import AppLayout from "../components/AppLayout";
-
 import {
     getRuralProperties,
     createRuralProperty,
+    deleteRuralProperty,
     type RuralProperty,
 } from "../services/ruralPropertyService";
 import { searchOrganizations } from "../services/organizationService";
@@ -42,11 +34,14 @@ export default function RuralProperties() {
     const [organizations, setOrganizations] = useState<
         { id: number; name: string }[]
     >([]);
-
     const [organizationsLoading, setOrganizationsLoading] = useState(false);
+    const [propertyToDelete, setPropertyToDelete] = useState<number | null>(
+        null
+    );
+
+    const [deleting, setDeleting] = useState(false);
 
     // Calcula a área total das propriedades*
-
     const totalArea = useMemo(() => {
 
         return properties.reduce(
@@ -187,8 +182,43 @@ export default function RuralProperties() {
         }
     };
 
-    // Executa a busca ao abrir a página*
+    async function handleDeleteProperty() {
+        if (propertyToDelete === null) {
+            return;
+        }
 
+        try {
+            setDeleting(true);
+            setError("");
+            setSuccess("");
+
+            await deleteRuralProperty(propertyToDelete);
+
+            setPropertyToDelete(null);
+            setSuccess("Propriedade excluída com sucesso!");
+
+            await loadProperties();
+        } catch (err) {
+            if (
+                err instanceof Error &&
+                err.message === "SESSION_EXPIRED"
+            ) {
+                localStorage.removeItem("token");
+                window.location.href = "/login";
+                return;
+            }
+
+            setError(
+                err instanceof Error
+                    ? err.message
+                    : "Não foi possível excluir a propriedade."
+            );
+        } finally {
+            setDeleting(false);
+        }
+    }
+
+    // Executa a busca ao abrir a página*
     useEffect(() => {
         loadProperties();
         loadOrganizations();
@@ -465,17 +495,6 @@ export default function RuralProperties() {
 
                         )}
 
-                        {/* Mensagem de sucesso */}
-
-                        {success && (
-
-                            <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-700 md:col-span-2">
-
-                                {success}
-
-                            </div>
-
-                        )}
 
                         {/* Botão */}
 
@@ -570,19 +589,12 @@ export default function RuralProperties() {
                                 >
 
                                     <div className="h-5 w-2/3 rounded bg-slate-200" />
-
                                     <div className="mt-3 h-4 w-1/3 rounded bg-slate-100" />
-
                                     <div className="mt-8 space-y-4">
-
                                         <div className="h-4 rounded bg-slate-100" />
-
                                         <div className="h-4 rounded bg-slate-100" />
-
                                         <div className="h-4 rounded bg-slate-100" />
-
                                     </div>
-
                                 </div>
 
                             ))}
@@ -590,25 +602,23 @@ export default function RuralProperties() {
                         </div>
 
                     )}
+                    {success && (
+                        <div className="mb-6 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm font-medium text-green-700">
+                            {success}
+                        </div>
+                    )}
 
                     {/* Lista de propriedades */}
 
                     {!loading && !error && properties.length > 0 && (
 
                         <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-
                             {properties.map((property) => (
-
                                 <article
-
                                     key={property.id}
-
                                     className="group overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:border-emerald-200 hover:shadow-lg"
-
                                 >
-
                                     {/* Cabeçalho do card */}
-
                                     <div className="border-b border-slate-100 bg-gradient-to-br from-emerald-50 to-white p-5">
                                         <div className="flex items-start justify-between gap-3">
                                             <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-100">
@@ -634,11 +644,8 @@ export default function RuralProperties() {
                                         <div className="mt-2 flex items-center gap-2 text-sm text-slate-500">
 
                                             <MapPin size={15} className="shrink-0" />
-
                                             <span className="truncate">
-
                                                 {property.location}
-
                                             </span>
 
                                         </div>
@@ -685,17 +692,19 @@ export default function RuralProperties() {
                                         </div>
 
                                         <div className="border-t border-slate-100 pt-4">
-
                                             <span className="inline-flex items-center gap-2 text-xs font-semibold text-emerald-700">
-
                                                 <span className="h-2 w-2 rounded-full bg-emerald-500" />
-
                                                 Cadastro ativo
-
                                             </span>
-
                                         </div>
-
+                                        <button
+                                            type="button"
+                                            onClick={() => setPropertyToDelete(property.id)}
+                                            disabled={deleting}
+                                            className="mt-4 w-full rounded-xl border border-red-200 bg-white px-4 py-2.5 text-sm font-semibold text-red-600 transition hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-60"
+                                        >
+                                            Excluir propriedade
+                                        </button>
                                     </div>
 
                                 </article>
@@ -734,6 +743,40 @@ export default function RuralProperties() {
                 </section>
 
             </div>
+            {propertyToDelete !== null && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 px-4">
+                    <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
+                        <h3 className="text-xl font-bold text-slate-800">
+                            Excluir propriedade?
+                        </h3>
+
+                        <p className="mt-3 text-sm text-slate-500">
+                            Tem certeza de que deseja excluir esta propriedade rural?
+                            Essa ação não poderá ser desfeita.
+                        </p>
+
+                        <div className="mt-6 flex justify-end gap-3">
+                            <button
+                                type="button"
+                                onClick={() => setPropertyToDelete(null)}
+                                disabled={deleting}
+                                className="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50"
+                            >
+                                Cancelar
+                            </button>
+
+                            <button
+                                type="button"
+                                onClick={handleDeleteProperty}
+                                disabled={deleting}
+                                className="rounded-xl bg-red-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-60"
+                            >
+                                {deleting ? "Excluindo..." : "Confirmar exclusão"}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
 
         </AppLayout>
 
