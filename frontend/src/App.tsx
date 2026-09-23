@@ -9,6 +9,7 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Organizations from "./pages/Organizations";
 import RuralProperties from "./pages/RuralProperties";
+import CropSeasons from "./pages/CropSeasons";
 function ProtectedRoute({
     children,
 }: {
@@ -42,6 +43,16 @@ function App() {
                     element={
                         <ProtectedRoute>
                             <RuralProperties />
+                        </ProtectedRoute>
+                    }
+                />
+
+                {/* Safras protegidas */}
+                <Route
+                    path="/crop-seasons"
+                    element={
+                        <ProtectedRoute>
+                            <CropSeasons />
                         </ProtectedRoute>
                     }
                 />

@@ -31,6 +31,11 @@ const navigationItems = [
         path: "/rural-properties"
     },
     {
+        label: "Safras",
+        icon: Sprout,
+        path: "/crop-seasons",
+    },
+    {
         label: "Análises de IA",
         icon: BrainCircuit,
     },
