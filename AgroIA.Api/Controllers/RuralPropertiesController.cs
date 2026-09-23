@@ -22,6 +22,38 @@ public class RuralPropertiesController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create(CreateRuralPropertyRequest request)
     {
+        if (string.IsNullOrWhiteSpace(request.Name))
+        {
+            return BadRequest(new
+            {
+                message = "O nome da propriedade é obrigatório."
+            });
+        }
+
+        if (string.IsNullOrWhiteSpace(request.Location))
+        {
+            return BadRequest(new
+            {
+                message = "A localização da propriedade é obrigatória."
+            });
+        }
+
+        if (request.AreaInHectares <= 0)
+        {
+            return BadRequest(new
+            {
+                message = "A área da propriedade deve ser maior que zero."
+            });
+        }
+
+        if (request.OrganizationId <= 0)
+        {
+            return BadRequest(new
+            {
+                message = "Uma organização válida deve ser informada."
+            });
+        }
+
         var organizationExists = await _context.Organizations
             .AnyAsync(organization => organization.Id == request.OrganizationId);
 
@@ -40,6 +72,7 @@ public class RuralPropertiesController : ControllerBase
             request.OrganizationId);
 
         _context.RuralProperties.Add(ruralProperty);
+
         await _context.SaveChangesAsync();
 
         return CreatedAtAction(

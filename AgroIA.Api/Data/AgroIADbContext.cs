@@ -18,12 +18,15 @@ public class AgroIADbContext : DbContext
     public DbSet<User> Users { get; set; }
 
     public DbSet<RuralProperty> RuralProperties { get; set; }
+    public DbSet<CropSeason> CropSeasons { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
         modelBuilder.ApplyConfiguration(new RuralPropertyConfiguration());
+        modelBuilder.ApplyConfiguration(
+         new CropSeasonConfiguration());
     }
 }
 
