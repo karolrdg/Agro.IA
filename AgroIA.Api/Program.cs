@@ -21,6 +21,7 @@ builder.Services.AddScoped<OrganizationRepository>();
 builder.Services.AddScoped<UserRepository>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<JwtService>();
+builder.Services.AddScoped<IAIAnalysisService, AIAnalysisService>();
 
 builder.Services.AddCors(options =>
 {

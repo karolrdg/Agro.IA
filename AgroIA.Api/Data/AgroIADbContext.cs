@@ -19,7 +19,7 @@ public class AgroIADbContext : DbContext
 
     public DbSet<RuralProperty> RuralProperties { get; set; }
     public DbSet<CropSeason> CropSeasons { get; set; }
-
+    public DbSet<AIAnalysis> AIAnalyses { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -27,6 +27,8 @@ public class AgroIADbContext : DbContext
         modelBuilder.ApplyConfiguration(new RuralPropertyConfiguration());
         modelBuilder.ApplyConfiguration(
          new CropSeasonConfiguration());
+        modelBuilder.ApplyConfiguration(
+    new AIAnalysisConfiguration());
     }
 }
 
