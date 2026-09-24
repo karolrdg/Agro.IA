@@ -10,6 +10,8 @@ import Dashboard from "./pages/Dashboard";
 import Organizations from "./pages/Organizations";
 import RuralProperties from "./pages/RuralProperties";
 import CropSeasons from "./pages/CropSeasons";
+import AIAnalyses from "./pages/AIAnalyses";
+import CropSeasonDetails from "./pages/CropSeasonDetails";
 function ProtectedRoute({
     children,
 }: {
@@ -65,6 +67,16 @@ function App() {
                             <Organizations />
                         </ProtectedRoute>
                     }
+                />
+
+                <Route
+                    path="/ai-analyses"
+                    element={<AIAnalyses />}
+                />
+
+                <Route
+                    path="/crop-seasons/:id"
+                    element={<CropSeasonDetails />}
                 />
 
                 <Route

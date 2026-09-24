@@ -322,12 +322,18 @@ export default function CropSeasons() {
                                     </div>
                                 </div>
 
-                                <div className="mt-5 border-t border-slate-200 pt-4">
+                                <div className="mt-5 flex flex-col gap-3 border-t border-slate-200 pt-4">
                                     <button
                                         type="button"
-                                        onClick={() =>
-                                            openDeleteModal(cropSeason.id)
-                                        }
+                                        onClick={() => navigate(`/crop-seasons/${cropSeason.id}`)}
+                                        className="w-full cursor-pointer rounded-xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-emerald-700"
+                                    >
+                                        Ver detalhes
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        onClick={() => openDeleteModal(cropSeason.id)}
                                         className="w-full cursor-pointer rounded-xl border border-red-200 bg-white px-4 py-2.5 text-sm font-semibold text-red-600 transition hover:bg-red-50"
                                     >
                                         Excluir safra

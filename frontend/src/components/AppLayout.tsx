@@ -38,6 +38,7 @@ const navigationItems = [
     {
         label: "Análises de IA",
         icon: BrainCircuit,
+        path: "/ai-analyses",
     },
     {
         label: "Configurações",
