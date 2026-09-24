@@ -274,7 +274,7 @@ export default function RuralProperties() {
                                 type="button"
                                 onClick={loadProperties}
                                 disabled={loading}
-                                className="inline-flex items-center gap-2 rounded-xl bg-emerald-400 px-4 py-3 text-sm font-semibold text-[#073b2a] transition hover:bg-emerald-300 disabled:cursor-not-allowed disabled:opacity-60"
+                                className="inline-flex cursor-pointer items-center gap-2 rounded-xl bg-emerald-400 px-4 py-3 text-sm font-semibold text-[#073b2a] transition hover:bg-emerald-300 disabled:cursor-not-allowed disabled:opacity-60"
                             >
 
                                 <RefreshCw
@@ -360,7 +360,7 @@ export default function RuralProperties() {
                 {/* Formulário de cadastro */}
 
                 <section className="rounded-3xl border border-slate-200/80 bg-white p-6 shadow-sm sm:p-8">
-                    <div className="mb-6">
+                    <div className="mb-6 ">
 
                         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-700">
                             Novo cadastro
@@ -503,7 +503,7 @@ export default function RuralProperties() {
                             <button
                                 type="submit"
                                 disabled={saving}
-                                className="rounded-xl bg-emerald-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-60"
+                                className="rounded-xl cursor-pointer bg-emerald-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-60"
                             >
                                 {saving ? "Cadastrando..." : "Cadastrar propriedade"}
 
@@ -701,7 +701,7 @@ export default function RuralProperties() {
                                             type="button"
                                             onClick={() => setPropertyToDelete(property.id)}
                                             disabled={deleting}
-                                            className="mt-4 w-full rounded-xl border border-red-200 bg-white px-4 py-2.5 text-sm font-semibold text-red-600 transition hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-60"
+                                            className="mt-4 cursor-pointer w-full rounded-xl border border-red-200 bg-white px-4 py-2.5 text-sm font-semibold text-red-600 transition hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-60"
                                         >
                                             Excluir propriedade
                                         </button>

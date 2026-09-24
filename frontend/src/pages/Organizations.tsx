@@ -13,6 +13,7 @@ import AppLayout from "../components/AppLayout";
 import { clearSession } from "../services/authStorage";
 import {
     createOrganization,
+    deleteOrganization,
     type Organization,
     searchOrganizations,
 } from "../services/organizationService";
@@ -30,7 +31,8 @@ export default function Organizations() {
     const [success, setSuccess] = useState("");
     const [name, setName] = useState("");
     const [type, setType] = useState("");
-
+    const [organizationToDelete, setOrganizationToDelete] = useState<number | null>(null);
+    const [deleting, setDeleting] = useState(false);
     const hasPreviousPage = page > 1;
     const hasNextPage = page < totalPages;
 
@@ -128,7 +130,41 @@ export default function Organizations() {
             setSaving(false);
         }
     };
+    async function handleDeleteOrganization() {
+        if (organizationToDelete === null) {
+            return;
+        }
 
+        try {
+            setDeleting(true);
+            setError("");
+            setSuccess("");
+
+            await deleteOrganization(organizationToDelete);
+
+            setOrganizationToDelete(null);
+            setSuccess("Organização excluída com sucesso!");
+
+            await loadOrganizations(page);
+        } catch (error: unknown) {
+            if (
+                error instanceof Error &&
+                error.message === "SESSION_EXPIRED"
+            ) {
+                clearSession();
+                window.location.href = "/login";
+                return;
+            }
+
+            setError(
+                error instanceof Error
+                    ? error.message
+                    : "Não foi possível excluir a organização."
+            );
+        } finally {
+            setDeleting(false);
+        }
+    }
     return (
         <AppLayout
             eyebrow="Gestão de dados"
@@ -228,7 +264,7 @@ export default function Organizations() {
 
                             <button
                                 type="submit"
-                                className="rounded-2xl bg-emerald-700 px-5 py-3 text-sm font-semibold text-white transition hover:bg-emerald-800"
+                                className="rounded-2xl cursor-pointer bg-emerald-700 px-5 py-3 text-sm font-semibold text-white transition hover:bg-emerald-800"
                             >
                                 Buscar
                             </button>
@@ -296,11 +332,22 @@ export default function Organizations() {
                                                 {organization.type}
                                             </span>
 
-                                            <span className="text-xs text-slate-400">
-                                                {new Date(
-                                                    organization.createdAt
-                                                ).toLocaleDateString("pt-BR")}
-                                            </span>
+                                            <div className="flex flex-col gap-2">
+                                                <span className="text-xs text-slate-400">
+                                                    {new Date(
+                                                        organization.createdAt
+                                                    ).toLocaleDateString("pt-BR")}
+                                                </span>
+
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setOrganizationToDelete(organization.id)}
+                                                    disabled={deleting}
+                                                    className="w-fit cursor-pointer  rounded-lg border border-red-200 px-3 py-1.5 text-xs font-semibold text-red-600 transition hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-60"
+                                                >
+                                                    Excluir
+                                                </button>
+                                            </div>
                                         </div>
                                     ))}
                                 </div>
@@ -406,7 +453,7 @@ export default function Organizations() {
                             <button
                                 type="submit"
                                 disabled={saving}
-                                className="flex w-full items-center justify-center gap-2 rounded-2xl bg-emerald-700 px-5 py-3 text-sm font-semibold text-white transition hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-60"
+                                className="flex cursor-pointer w-full items-center justify-center gap-2 rounded-2xl bg-emerald-700 px-5 py-3 text-sm font-semibold text-white transition hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-60"
                             >
                                 <Plus size={18} />
 
@@ -416,6 +463,40 @@ export default function Organizations() {
                     </aside>
                 </div>
             </section>
+            {organizationToDelete !== null && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 px-4">
+                    <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
+                        <h3 className="text-xl font-bold text-slate-800">
+                            Excluir organização?
+                        </h3>
+
+                        <p className="mt-3 text-sm text-slate-500">
+                            Tem certeza de que deseja excluir esta organização?
+                            Essa ação não poderá ser desfeita.
+                        </p>
+
+                        <div className="mt-6 flex justify-end gap-3">
+                            <button
+                                type="button"
+                                onClick={() => setOrganizationToDelete(null)}
+                                disabled={deleting}
+                                className="rounded-xl cursor-pointer border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50"
+                            >
+                                Cancelar
+                            </button>
+
+                            <button
+                                type="button"
+                                onClick={handleDeleteOrganization}
+                                disabled={deleting}
+                                className="rounded-xl cursor-pointer bg-red-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-60"
+                            >
+                                {deleting ? "Excluindo..." : "Confirmar exclusão"}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </AppLayout>
     );
 }

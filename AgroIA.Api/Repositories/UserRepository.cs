@@ -13,13 +13,11 @@ public class UserRepository
         _context = context;
     }
 
-
     public async Task<User?> GetByEmailAsync(string email)
     {
         return await _context.Users
             .FirstOrDefaultAsync(user => user.Email == email);
     }
-
 
     public async Task<User> CreateAsync(User user)
     {
@@ -28,5 +26,34 @@ public class UserRepository
         await _context.SaveChangesAsync();
 
         return user;
+    }
+
+    public async Task<List<User>> GetAllAsync()
+    {
+        return await _context.Users
+            .AsNoTracking()
+            .ToListAsync();
+    }
+
+    public async Task<User?> GetByIdAsync(int id)
+    {
+        return await _context.Users
+            .FirstOrDefaultAsync(user => user.Id == id);
+    }
+
+    public async Task<bool> DeleteAsync(int id)
+    {
+        var user = await GetByIdAsync(id);
+
+        if (user is null)
+        {
+            return false;
+        }
+
+        _context.Users.Remove(user);
+
+        await _context.SaveChangesAsync();
+
+        return true;
     }
 }

@@ -68,4 +68,38 @@ public class UsersController : ControllerBase
             user = User.Identity?.Name
         });
     }
+
+    [Authorize]
+    [HttpGet]
+    public async Task<IActionResult> GetAll()
+    {
+        var users = await _userService.GetAllAsync();
+
+        var response = users.Select(user => new
+        {
+            user.Id,
+            user.Name,
+            user.Email,
+            user.CreatedAt
+        });
+
+        return Ok(response);
+    }
+
+    [Authorize]
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var deleted = await _userService.DeleteAsync(id);
+
+        if (!deleted)
+        {
+            return NotFound(new
+            {
+                message = "Usuário não encontrado."
+            });
+        }
+
+        return NoContent();
+    }
 }

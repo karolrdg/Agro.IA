@@ -79,4 +79,14 @@ public class UserService
             Email = user.Email
         };
     }
+
+    public async Task<List<Models.User>> GetAllAsync()
+    {
+        return await _userRepository.GetAllAsync();
+    }
+
+    public async Task<bool> DeleteAsync(int id)
+    {
+        return await _userRepository.DeleteAsync(id);
+    }
 }

@@ -96,3 +96,12 @@ export async function createOrganization(
 
     return handleResponse<Organization>(response);
 }
+
+export async function deleteOrganization(id: number): Promise<void> {
+    const response = await fetch(`${API_URL}/Organizations/${id}`, {
+        method: "DELETE",
+        headers: getAuthHeaders(),
+    });
+
+    await handleResponse<void>(response);
+}
