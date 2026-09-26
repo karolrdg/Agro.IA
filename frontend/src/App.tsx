@@ -12,6 +12,7 @@ import RuralProperties from "./pages/RuralProperties";
 import CropSeasons from "./pages/CropSeasons";
 import AIAnalyses from "./pages/AIAnalyses";
 import CropSeasonDetails from "./pages/CropSeasonDetails";
+import Register from "./pages/Register";
 function ProtectedRoute({
     children,
 }: {
@@ -98,7 +99,7 @@ function App() {
                         />
                     }
                 />
-
+                <Route path="/register" element={<Register />} />
 
             </Routes>
         </BrowserRouter>
