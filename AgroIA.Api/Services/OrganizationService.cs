@@ -78,6 +78,17 @@ public class OrganizationService
             return false;
         }
 
+        // Verifica se existem propriedades vinculadas à organização.
+        var hasRuralProperties =
+            await _organizationRepository
+                .HasRuralPropertiesAsync(id);
+
+        if (hasRuralProperties)
+        {
+            throw new InvalidOperationException(
+                "Não é possível excluir esta organização porque existem propriedades rurais vinculadas a ela. Exclua as propriedades primeiro.");
+        }
+
         await _organizationRepository
             .DeleteOrganizationAsync(organization);
 

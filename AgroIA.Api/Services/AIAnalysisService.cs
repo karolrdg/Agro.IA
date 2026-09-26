@@ -105,4 +105,22 @@ public class AIAnalysisService : IAIAnalysisService
             .OrderByDescending(analysis => analysis.CreatedAt)
             .ToListAsync();
     }
+    public async Task<bool> DeleteAsync(int id)
+    {
+        var analysis = await _context.AIAnalyses
+            .FirstOrDefaultAsync(analysis => analysis.Id == id);
+
+        if (analysis is null)
+        {
+            return false;
+        }
+
+        _context.AIAnalyses.Remove(analysis);
+
+        await _context.SaveChangesAsync();
+
+        return true;
+    }
+
+
 }

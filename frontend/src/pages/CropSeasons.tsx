@@ -328,7 +328,7 @@ export default function CropSeasons() {
                                         onClick={() => navigate(`/crop-seasons/${cropSeason.id}`)}
                                         className="w-full cursor-pointer rounded-xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-emerald-700"
                                     >
-                                        Ver detalhes
+                                        Analisar...
                                     </button>
 
                                     <button

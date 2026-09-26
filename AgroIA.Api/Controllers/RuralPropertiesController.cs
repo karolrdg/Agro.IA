@@ -114,8 +114,9 @@ public class RuralPropertiesController : ControllerBase
     public async Task<IActionResult> Delete(int id)
     {
         var property = await _context.RuralProperties
-            .FindAsync(id);
+            .FirstOrDefaultAsync(property => property.Id == id);
 
+        // Verifica se a propriedade existe
         if (property is null)
         {
             return NotFound(new
@@ -124,8 +125,22 @@ public class RuralPropertiesController : ControllerBase
             });
         }
 
+        // Verifica se existem safras vinculadas à propriedade
+        var hasCropSeasons = await _context.CropSeasons
+            .AnyAsync(cropSeason =>
+                cropSeason.RuralPropertyId == id);
+
+        if (hasCropSeasons)
+        {
+            return Conflict(new
+            {
+                message = "Não é possível excluir esta propriedade porque existem safras vinculadas a ela. Exclua as safras primeiro."
+            });
+        }
+
         try
         {
+            // Exclui a propriedade quando não existem safras vinculadas
             _context.RuralProperties.Remove(property);
 
             await _context.SaveChangesAsync();
@@ -134,12 +149,11 @@ public class RuralPropertiesController : ControllerBase
         }
         catch (DbUpdateException)
         {
-            return BadRequest(new
+            return Conflict(new
             {
-                message = "Não é possível excluir esta propriedade porque existem dados vinculados a ela, como safras."
+                message = "Não é possível excluir esta propriedade porque existem outros dados vinculados a ela."
             });
         }
     }
-
 
 }

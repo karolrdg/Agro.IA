@@ -73,19 +73,29 @@ public class OrganizationsController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteOrganization(int id)
     {
-        var deleted =
-            await _organizationService
-                .DeleteOrganizationAsync(id);
-
-        if (!deleted)
+        try
         {
-            return NotFound(new
+            var deleted =
+                await _organizationService
+                    .DeleteOrganizationAsync(id);
+
+            if (!deleted)
             {
-                message = "A organização não foi excluída porque não foi encontrada."
+                return NotFound(new
+                {
+                    message = "A organização não foi encontrada."
+                });
+            }
+
+            return NoContent();
+        }
+        catch (InvalidOperationException exception)
+        {
+            return Conflict(new
+            {
+                message = exception.Message
             });
         }
-
-        return NoContent();
     }
 
     [HttpGet("{id}")]

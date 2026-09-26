@@ -80,7 +80,6 @@ export async function createCropSeason(
     return responseData;
 }
 
-// Excluir uma safra
 export async function deleteCropSeason(
     id: number
 ): Promise<void> {
@@ -101,8 +100,21 @@ export async function deleteCropSeason(
         throw new Error("SESSION_EXPIRED");
     }
 
+    const responseText = await response.text();
+
+    let responseData: { message?: string } | null = null;
+
+    if (responseText) {
+        try {
+            responseData = JSON.parse(responseText);
+        } catch {
+            responseData = null;
+        }
+    }
+
     if (!response.ok) {
         throw new Error(
+            responseData?.message ||
             "Não foi possível excluir a safra."
         );
     }

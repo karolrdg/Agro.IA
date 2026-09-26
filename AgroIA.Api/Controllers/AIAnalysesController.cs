@@ -56,5 +56,22 @@ public class AIAnalysesController : ControllerBase
 
         return Ok(analyses);
     }
+
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> DeleteAnalysis(int id)
+    {
+        var deleted =
+            await _aiAnalysisService.DeleteAsync(id);
+
+        if (!deleted)
+        {
+            return NotFound(new
+            {
+                message = "Análise de IA não encontrada."
+            });
+        }
+
+        return NoContent();
+    }
 }
 

@@ -115,6 +115,20 @@ public class CropSeasonsController : ControllerBase
             });
         }
 
+        // Verifica se existem análises de IA vinculadas à safra
+        var hasAIAnalyses = await _context.AIAnalyses
+            .AnyAsync(analysis =>
+                analysis.CropSeasonId == id);
+
+        if (hasAIAnalyses)
+        {
+            return Conflict(new
+            {
+                message = "Não é possível excluir esta safra porque existem análises de IA vinculadas a ela."
+            });
+        }
+
+        // Exclui a safra quando não existem análises vinculadas
         _context.CropSeasons.Remove(cropSeason);
 
         await _context.SaveChangesAsync();

@@ -103,5 +103,12 @@ public class OrganizationRepository
             TotalPages = totalPages
         };
     }
+
+    public async Task<bool> HasRuralPropertiesAsync(int organizationId)
+    {
+        return await _context.RuralProperties
+            .AnyAsync(property =>
+                property.OrganizationId == organizationId);
+    }
 }
 

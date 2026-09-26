@@ -66,7 +66,7 @@ export default function AppLayout({
     };
 
     return (
-        <main className="min-h-screen bg-[#f4f7f4] text-slate-900 lg:flex">
+        <main className="min-h-screen bg-[#f4f7f4] text-slate-900">
             {isSidebarOpen && (
                 <button
                     type="button"
@@ -77,7 +77,7 @@ export default function AppLayout({
             )}
 
             <aside
-                className={`fixed inset-y-0 left-0 z-40 flex w-72 flex-col border-r border-emerald-900/20 bg-[#073b2a] text-white shadow-2xl transition-transform duration-300 lg:static lg:min-h-screen lg:translate-x-0 lg:shadow-none ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+                className={`fixed inset-y-0 left-0 z-40 flex w-72 flex-col border-r border-emerald-900/20 bg-[#073b2a] text-white shadow-2xl transition-transform duration-300 lg:translate-x-0 lg:shadow-none ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"
                     }`}
             >
                 <div className="flex items-center justify-between border-b border-white/10 px-5 py-5">
@@ -169,8 +169,8 @@ export default function AppLayout({
                 </div>
             </aside>
 
-            <div className="min-w-0 flex-1">
-                <header className="border-b border-emerald-900/20 bg-[#073b2a] text-white lg:bg-white lg:text-slate-900">
+            <div className="min-w-0 lg:ml-72">
+                <header className="sticky top-0 z-20 border-b border-emerald-900/20 bg-[#073b2a] text-white lg:bg-white lg:text-slate-900">
                     <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
                         <div className="flex items-center gap-3">
                             <button

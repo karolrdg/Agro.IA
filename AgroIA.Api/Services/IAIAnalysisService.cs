@@ -4,9 +4,9 @@ namespace AgroIA.Api.Services;
 
 public interface IAIAnalysisService
 {
-    Task<AIAnalysis> AnalyzeAsync(
-        int cropSeasonId,
-        string prompt);
+    Task<AIAnalysis> AnalyzeAsync(int cropSeasonId, string prompt);
 
     Task<List<AIAnalysis>> GetAllAsync();
+
+    Task<bool> DeleteAsync(int id);
 }

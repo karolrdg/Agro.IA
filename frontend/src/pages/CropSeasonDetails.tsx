@@ -17,6 +17,7 @@ import {
 import {
     getAIAnalyses,
     createAIAnalysis,
+    deleteAIAnalysis,
     type AIAnalysis,
 } from "../services/aiAnalysisService";
 
@@ -131,6 +132,44 @@ export default function CropSeasonDetails() {
             setSending(false);
         }
     }
+    async function handleDeleteAnalysis(analysisId: number) {
+        const confirmed = window.confirm(
+            "Tem certeza que deseja excluir esta análise de IA?"
+        );
+
+        if (!confirmed) {
+            return;
+        }
+
+        try {
+            setErrorMessage("");
+            setSuccessMessage("");
+
+            await deleteAIAnalysis(analysisId);
+
+            // Remove a análise da tela sem precisar recarregar a página.
+            setAnalyses((current) =>
+                current.filter((analysis) => analysis.id !== analysisId)
+            );
+
+            setSuccessMessage("Análise excluída com sucesso!");
+        } catch (error) {
+            if (
+                error instanceof Error &&
+                error.message === "SESSION_EXPIRED"
+            ) {
+                clearSession();
+                navigate("/login");
+                return;
+            }
+
+            setErrorMessage(
+                error instanceof Error
+                    ? error.message
+                    : "Não foi possível excluir a análise."
+            );
+        }
+    }
 
     if (loading) {
         return (
@@ -157,6 +196,8 @@ export default function CropSeasonDetails() {
             </div>
         );
     }
+
+
 
     return (
         <div className="mx-auto max-w-6xl space-y-8 px-4 py-8 sm:px-6 lg:px-8">
@@ -324,7 +365,18 @@ export default function CropSeasonDetails() {
                                     {analysis.result}
                                 </p>
                             </div>
+
+                            <div className="mt-5  flex justify-end">
+                                <button
+                                    type="button"
+                                    onClick={() => handleDeleteAnalysis(analysis.id)}
+                                    className="rounded-xl cursor-pointer border border-red-200 px-4 py-2 text-sm font-semibold text-red-600 transition hover:bg-red-50"
+                                >
+                                    Excluir análise
+                                </button>
+                            </div>
                         </article>
+
                     ))
                 )}
             </section>

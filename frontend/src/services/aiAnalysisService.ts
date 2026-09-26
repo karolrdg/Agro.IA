@@ -81,3 +81,31 @@ export async function createAIAnalysis(
 
     return handleResponse<AIAnalysis>(response);
 }
+
+export async function deleteAIAnalysis(id: number): Promise<void> {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+        throw new Error("Token não encontrado.");
+    }
+
+    const response = await fetch(`${API_URL}/AIAnalyses/${id}`, {
+        method: "DELETE",
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+
+    if (response.status === 401) {
+        throw new Error("SESSION_EXPIRED");
+    }
+
+    if (!response.ok) {
+        const responseData = await response.json().catch(() => null);
+
+        throw new Error(
+            responseData?.message ||
+            "Não foi possível excluir a análise."
+        );
+    }
+}
