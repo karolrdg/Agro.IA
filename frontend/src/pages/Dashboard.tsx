@@ -11,18 +11,48 @@ import {
 import AppLayout from "../components/AppLayout";
 import { clearSession } from "../services/authStorage";
 import { getProtectedData } from "../services/userService";
+import { getRuralProperties } from "../services/ruralPropertyService";
+import { getAIAnalyses } from "../services/aiAnalysisService";
+import { searchOrganizations } from "../services/organizationService";
+import { getCropSeasons } from "../services/cropSeasonService";
 
 export default function Dashboard() {
     const [name, setName] = useState("");
     const [message, setMessage] = useState("");
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
-
+    const [propertyCount, setPropertyCount] = useState(0);
+    const [organizationCount, setOrganizationCount] = useState(0);
+    const [analysisCount, setAnalysisCount] = useState(0);
+    const [cropSeasonCount, setCropSeasonCount] = useState(0);
     useEffect(() => {
         async function loadProtectedData() {
             try {
                 // Solicita os dados ao serviço
                 const data = await getProtectedData();
+
+                setMessage(data.message);
+
+                // Carrega os dados reais para os indicadores do Dashboard.
+                const [
+                    properties,
+                    organizations,
+                    analyses,
+                    cropSeasons,
+                ] = await Promise.all([
+                    getRuralProperties(),
+                    searchOrganizations({
+                        page: 1,
+                        pageSize: 1000,
+                    }),
+                    getAIAnalyses(),
+                    getCropSeasons(),
+                ]);
+
+                setPropertyCount(properties.length);
+                setOrganizationCount(organizations.totalItems);
+                setAnalysisCount(analyses.length);
+                setCropSeasonCount(cropSeasons.length);
 
                 // Guarda a mensagem retornada pela API
                 setMessage(data.message);
@@ -176,7 +206,7 @@ export default function Dashboard() {
                 </div>
 
                 {/* Cards de indicadores */}
-                <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
                     {/* Card de propriedades */}
                     <div className="group rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg">
                         <div className="flex items-start justify-between">
@@ -199,7 +229,7 @@ export default function Dashboard() {
 
                         <div className="mt-1 flex items-end gap-2">
                             <span className="text-4xl font-bold tracking-tight text-slate-900">
-                                0
+                                {propertyCount}
                             </span>
 
                             <span className="mb-1 text-xs text-slate-400">
@@ -234,7 +264,7 @@ export default function Dashboard() {
 
                         <div className="mt-1 flex items-end gap-2">
                             <span className="text-4xl font-bold tracking-tight text-slate-900">
-                                0
+                                {organizationCount}
                             </span>
 
                             <span className="mb-1 text-xs text-slate-400">
@@ -269,7 +299,7 @@ export default function Dashboard() {
 
                         <div className="mt-1 flex items-end gap-2">
                             <span className="text-4xl font-bold tracking-tight text-slate-900">
-                                0
+                                {analysisCount}
                             </span>
 
                             <span className="mb-1 text-xs text-slate-400">
@@ -279,6 +309,39 @@ export default function Dashboard() {
 
                         <p className="mt-3 text-sm leading-5 text-slate-500">
                             Acompanhe suas análises inteligentes.
+                        </p>
+                    </div>
+                    <div className="group rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg">
+                        <div className="flex items-start justify-between">
+                            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-100">
+                                <Leaf
+                                    size={24}
+                                    className="text-amber-700"
+                                />
+                            </div>
+
+                            <ArrowUpRight
+                                size={19}
+                                className="text-slate-300 transition group-hover:text-amber-600"
+                            />
+                        </div>
+
+                        <p className="mt-6 text-sm font-medium text-slate-500">
+                            Safras
+                        </p>
+
+                        <div className="mt-1 flex items-end gap-2">
+                            <span className="text-4xl font-bold tracking-tight text-slate-900">
+                                {cropSeasonCount}
+                            </span>
+
+                            <span className="mb-1 text-xs text-slate-400">
+                                cadastradas
+                            </span>
+                        </div>
+
+                        <p className="mt-3 text-sm leading-5 text-slate-500">
+                            Acompanhe suas safras agrícolas.
                         </p>
                     </div>
                 </div>
